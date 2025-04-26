@@ -50,7 +50,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: iiilee0907/frontend:latest
+        image: iiilee0907/frontend-ec2:latest
         imagePullPolicy: Always
         ports:
           - containerPort: 80
