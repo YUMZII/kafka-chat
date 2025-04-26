@@ -31,7 +31,7 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      nodePort:32222
+      nodePort: 32222
   type: NodePort 
 ---
 apiVersion: apps/v1
