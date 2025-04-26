@@ -7,7 +7,7 @@ export default function Chat() {
   const wsRef = useRef(null);
   
   useEffect(() => {
-    const ws = new WebSocket('ws://52.78.250.173:2222/ws');
+    const ws = new WebSocket('ws://52.78.250.173:31111/ws');
     wsRef.current = ws;
 
     ws.onopen = () => {

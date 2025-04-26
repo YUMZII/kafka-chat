@@ -1,0 +1,14 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: multi-worker-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 52.78.250.173/32
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: multi-worker-advertisement
+  namespace: metallb-system
