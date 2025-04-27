@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-chat-logstash
+  namespace: logging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-chat-logstash
+  template:
+    metadata:
+      labels:
+        app: kafka-chat-logstash
+    spec:
+      containers:
+      - name: logstash
+        image: docker.elastic.co/logstash/logstash:8.12.2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5044  # (Kafka input이라 사실 열 필요는 없지만 관습적으로 넣음)
+        env:
+        - name: KAFKA_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: kafka-credentials
+              key: username
+        - name: KAFKA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kafka-credentials
+              key: password
+        volumeMounts:
+        - name: logstash-pipeline-volume
+          mountPath: /usr/share/logstash/pipeline/logstash.conf
+          subPath: logstash.conf
+      volumes:
+      - name: logstash-pipeline-volume
+        configMap:
+          name: kafka-chat-logstash-config
