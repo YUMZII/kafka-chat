@@ -1,0 +1,28 @@
+# Logstash 컨테이너 안 /usr/share/logstash/pipeline/logstash.conf 에 넣는다 -> kafka-chat-logstash-deployment.yaml 33번 째줄 참고
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-chat-logstash-config
+  namespace: logging
+data:
+  logstash.conf: |
+    input {
+      kafka {
+        bootstrap_servers => "kafka:9092" # 배포된 kafka 서비스
+        topics => ["chat"]
+        group_id => "elk-logstash-consumer"
+        codec => "json"
+        auto_offset_reset => "earliest"
+        security_protocol => "SASL_PLAINTEXT"
+        sasl_mechanism => "SCRAM-SHA-256"
+        sasl_jaas_config => "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${KAFKA_USERNAME}\" password=\"${KAFKA_PASSWORD}\";"
+      }
+    }
+
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch.logging.svc.cluster.local:9200"] # namespace: logging
+        index => "kafka-chat-messages-%{+YYYY.MM.dd}"
+      }
+      stdout { codec => rubydebug }
+    }
