@@ -17,7 +17,7 @@ data:
           codec => "json"
           auto_offset_reset => "earliest"
         }
-
+    }
     output {
       elasticsearch {
         hosts => ["http://elasticsearch.logging.svc.cluster.local:9200"] # namespace: logging
