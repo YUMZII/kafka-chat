@@ -65,7 +65,7 @@ echo "✅ 평문 Kafka 비밀번호 획득: $KAFKA_PASSWORD"
 KAFKA_PASSWORD_BASE64=$(echo -n "$KAFKA_PASSWORD" | base64)
 echo "✅ Base64 인코딩 비밀번호: $KAFKA_PASSWORD_BASE64"
 
-# 10. application.yml 수정 (password=... 부분만)
+# 10. backend application.yml 수정 (password=... 부분만)
 echo "👉 backend application.yml 비밀번호 수정 중..."
 sed -i "s/password=\".*\";/password=\"$KAFKA_PASSWORD\";/" ./backend/src/main/resources/application.yml
 
@@ -94,3 +94,31 @@ fi
 # 14. (❌ Backend Docker 빌드 제거됨)
 
 echo "🎉 모든 작업 완료!"
+
+# ✅ 추가: client.properties password 수정
+echo "👉 client.properties password 수정 중..."
+sed -i "s/password=\".*\";/password=\"$KAFKA_PASSWORD\";/" client.properties
+echo "✅ client.properties 파일 수정 완료!"
+
+# ✅ 추가: kafka-client Pod 생성
+echo "👉 kafka-client Pod 생성 중..."
+kubectl run kafka-client --restart='Never' --image docker.io/bitnami/kafka:4.0.0-debian-12-r0 --namespace default --command -- sleep infinity
+
+# ✅ 추가: kafka-client Pod Running 대기
+echo "👉 kafka-client Pod가 Running 상태가 될 때까지 대기 중..."
+while true; do
+  POD_STATUS=$(kubectl get pod kafka-client -n default -o jsonpath='{.status.phase}')
+  if [ "$POD_STATUS" = "Running" ]; then
+    echo "✅ kafka-client Pod가 Running 상태입니다."
+    break
+  else
+    echo "⌛ 현재 kafka-client 상태: $POD_STATUS ... 3초 후 재확인"
+    sleep 3
+  fi
+done
+
+# ✅ 추가: client.properties 파일 복사
+echo "👉 client.properties 파일을 kafka-client Pod로 복사 중..."
+kubectl cp --namespace default client.properties kafka-client:/tmp/client.properties
+
+echo "🎉 추가 작업까지 모두 완료!"

@@ -6,17 +6,17 @@ metadata:
 data:
   logstash.conf: |
     input {
-      kafka {
-        bootstrap_servers => "kafka:9092" # 배포된 kafka 서비스
-        topics => ["chat"]
-        group_id => "elk-logstash-consumer"
-        codec => "json"
-        auto_offset_reset => "earliest"
-        security_protocol => "SASL_PLAINTEXT"
-        sasl_mechanism => "SCRAM-SHA-256"
-        sasl_jaas_config => "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${KAFKA_USERNAME}\" password=\"${KAFKA_PASSWORD}\";"
-      }
-    }
+        kafka {
+          bootstrap_servers => "kafka:9092"
+          topics => ["chat"]
+          group_id => "elk-logstash-consumer"
+          security_protocol => "SASL_PLAINTEXT"
+          sasl_mechanism => "SCRAM-SHA-256"
+          sasl_username => "${KAFKA_USERNAME}"
+          sasl_password => "${KAFKA_PASSWORD}"
+          codec => "json"
+          auto_offset_reset => "earliest"
+        }
 
     output {
       elasticsearch {
