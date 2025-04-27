@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafka-chat-logstash
-  namespace: logging
 spec:
   replicas: 1
   selector:
@@ -30,6 +29,16 @@ spec:
             secretKeyRef:
               name: kafka-credentials
               key: password
+        - name: ES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: username
+        - name: ES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: password
         volumeMounts:
         - name: logstash-pipeline-volume
           mountPath: /usr/share/logstash/pipeline/logstash.conf
@@ -38,3 +47,4 @@ spec:
       - name: logstash-pipeline-volume
         configMap:
           name: kafka-chat-logstash-config
+

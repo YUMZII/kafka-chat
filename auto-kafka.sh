@@ -75,6 +75,7 @@ sed -i "s/password: .*/password: $KAFKA_PASSWORD_BASE64/" ./kafka/kafka-key.yaml
 
 # 12. kafka-key.yaml Kubernetes 적용
 echo "👉 kafka-key.yaml Kubernetes에 적용 중..."
+kubectl delete -f ./kafka/kafka-key.yaml
 kubectl apply -f ./kafka/kafka-key.yaml
 
 # 13. kafka-credentials Secret 생성 확인
