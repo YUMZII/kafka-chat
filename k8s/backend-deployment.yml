@@ -12,6 +12,7 @@ spec:
   type: NodePort
 
 ---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,3 +33,15 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          env:
+            - name: KAFKA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: username
+            - name: KAFKA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: password
+
