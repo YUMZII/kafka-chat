@@ -53,7 +53,7 @@ helm install kafka bitnami/kafka \
 
 # 7. Kafka 설치 완료 대기 (10초 정도)
 echo "👉 Kafka 설치 완료 대기 중... (10초)"
-sleep 10
+sleep 20
 
 # 8. Kafka 비밀번호 추출
 echo "👉 Kafka 비밀번호 추출 중..."

@@ -6,6 +6,7 @@ metadata:
 data:
   logstash.conf: |
     input {
+<<<<<<< HEAD
         kafka {
           bootstrap_servers => "kafka:9092"
           topics => ["chat"]
@@ -17,6 +18,18 @@ data:
           codec => "json"
           auto_offset_reset => "earliest"
         }
+=======
+      kafka {
+        bootstrap_servers => "kafka:9092"
+        topics => ["chat"]
+        group_id => "elk-logstash-consumer"
+        security_protocol => "SASL_PLAINTEXT"
+        sasl_mechanism => "SCRAM-SHA-256"
+        sasl_jaas_config => "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${KAFKA_USERNAME}\" password=\"${KAFKA_PASSWORD}\";"
+        codec => "json"
+        auto_offset_reset => "earliest"
+      }
+>>>>>>> b5131f8 (kafka key 관련 오류 해결)
     }
     output {
       elasticsearch {
