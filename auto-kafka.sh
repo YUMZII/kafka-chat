@@ -57,19 +57,21 @@ helm install kafka bitnami/kafka -n default \
   --set global.defaultStorageClass=nfs-client
 
 # 7. Kafka Pod Running 대기
-echo "👉 Kafka Pod(kafka-controller-0~2) 모두 Running 대기 중..."
+# 7. Kafka Pod Running 대기
+echo "👉 Kafka Pod(kafka-controller-0~2) 모두 Ready(1/1) 대기 중..."
 
 while true; do
-  RUNNING_COUNT=$(kubectl get pods -n default -l app.kubernetes.io/name=kafka -o json | jq '[.items[] | select(.status.phase=="Running")] | length')
-  
-  if [ "$RUNNING_COUNT" -eq 3 ]; then
-    echo "✅ Kafka Pod 3개 모두 Running 상태입니다."
+  READY_COUNT=$(kubectl get pods -n default -l app.kubernetes.io/name=kafka --no-headers | grep -c "1/1")
+
+  if [ "$READY_COUNT" -eq 3 ]; then
+    echo "✅ Kafka Pod 3개 모두 Ready(1/1) 상태입니다."
     break
   else
-    echo "⌛ 현재 Running 중인 Kafka Pod 수: $RUNNING_COUNT ... 3초 후 재확인"
+    echo "⌛ 현재 Ready(1/1) Kafka Pod 수: $READY_COUNT ... 3초 후 재확인"
     sleep 3
   fi
 done
+
 
 # 8. Kafka 비밀번호 추출
 echo "👉 Kafka 비밀번호 추출 중..."
@@ -80,10 +82,6 @@ echo "✅ 평문 Kafka 비밀번호 획득: $KAFKA_PASSWORD"
 # 9. base64 인코딩
 KAFKA_PASSWORD_BASE64=$(echo -n "$KAFKA_PASSWORD" | base64)
 echo "✅ Base64 인코딩 비밀번호: $KAFKA_PASSWORD_BASE64"
-
-# 10. backend application.yml 수정 (password=... 부분만)
-echo "👉 backend application.yml 비밀번호 수정 중..."
-sed -i "s/password=\".*\";/password=\"$KAFKA_PASSWORD\";/" ./backend/src/main/resources/application.yml
 
 # 11. kafka-key.yaml 수정
 echo "👉 kafka-key.yaml 비밀번호(base64) 수정 중..."
