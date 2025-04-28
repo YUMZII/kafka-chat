@@ -53,7 +53,8 @@ helm install kafka bitnami/kafka -n default \
   --set auth.interBrokerUser=inter_broker_user \
   --set auth.interBrokerPassword=gr8b3sFqhq \
   --set auth.controllerUser=controller_user \
-  --set auth.controllerPassword=iDSfadLbGv
+  --set auth.controllerPassword=iDSfadLbGv \
+  --set global.defaultStorageClass=nfs-client
 
 # 7. Kafka Pod Running 대기
 echo "👉 Kafka Pod(kafka-controller-0~2) 모두 Running 대기 중..."
