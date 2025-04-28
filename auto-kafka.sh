@@ -47,13 +47,28 @@ done
 
 # 6. Helm kafka 설치
 echo "👉 Helm kafka 재설치 시작..."
-helm install kafka bitnami/kafka \
-  --set replicaCount=1 \
-  --set global.defaultStorageClass=nfs-client
+helm install kafka bitnami/kafka -n default \
+  --set auth.clientUsers[0]=user1 \
+  --set auth.clientPasswords[0]=mbUYdB8pDI \
+  --set auth.interBrokerUser=inter_broker_user \
+  --set auth.interBrokerPassword=gr8b3sFqhq \
+  --set auth.controllerUser=controller_user \
+  --set auth.controllerPassword=iDSfadLbGv
 
-# 7. Kafka 설치 완료 대기 (10초 정도)
-echo "👉 Kafka 설치 완료 대기 중... (10초)"
-sleep 20
+# 7. Kafka Pod Running 대기
+echo "👉 Kafka Pod(kafka-controller-0~2) 모두 Running 대기 중..."
+
+while true; do
+  RUNNING_COUNT=$(kubectl get pods -n default -l app.kubernetes.io/name=kafka -o json | jq '[.items[] | select(.status.phase=="Running")] | length')
+  
+  if [ "$RUNNING_COUNT" -eq 3 ]; then
+    echo "✅ Kafka Pod 3개 모두 Running 상태입니다."
+    break
+  else
+    echo "⌛ 현재 Running 중인 Kafka Pod 수: $RUNNING_COUNT ... 3초 후 재확인"
+    sleep 3
+  fi
+done
 
 # 8. Kafka 비밀번호 추출
 echo "👉 Kafka 비밀번호 추출 중..."
