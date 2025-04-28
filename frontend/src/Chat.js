@@ -59,7 +59,7 @@ export default function Chat() {
       flexDirection: 'column',
       height: '80vh'
     }}>
-      <h2 style={{ textAlign: 'center', marginBottom: 20 }}>Hello Chat</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: 20 }}>jaherty Chat</h2>
       <div
         style={{
           flex: 1,
