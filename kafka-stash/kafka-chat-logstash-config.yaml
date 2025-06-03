@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-chat-logstash-config
+  namespace: default  # 너는 namespace default 쓸 거니까 명시함
+data:
+  logstash.conf: |
+    input {
+      kafka {
+        bootstrap_servers => "kafka:9092"
+        topics => ["chat"]
+        group_id => "elk-logstash-consumer"
+        security_protocol => "SASL_PLAINTEXT"
+        sasl_mechanism => "SCRAM-SHA-256"
+        sasl_jaas_config => "org.apache.kafka.common.security.scram.ScramLoginModule required username='${KAFKA_USERNAME:user1}' password='${KAFKA_PASSWORD:mbUYdB8pDI}';"
+        codec => "plain"
+        auto_offset_reset => "earliest"
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch.logging.svc.cluster.local:9200"]
+        index => "kafka-chat-messages-%{+YYYY.MM.dd}"
+        user => "${ES_USERNAME:elastic}"
+        password => "${ES_PASSWORD:elasticstack}"
+      }
+      stdout { codec => rubydebug }
+    }
+
